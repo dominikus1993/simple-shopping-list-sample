@@ -132,5 +132,8 @@
       }
     }
   },
-  "defaultProject": "ShoppingListSample.Api"
+  "defaultProject": "ShoppingListSample.Api",
+  "cli": {
+    "analytics": "a5c268b3-5b9a-4fa8-8f8a-6d820e0a5132"
+  }
 }
