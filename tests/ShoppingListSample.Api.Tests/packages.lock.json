@@ -140,15 +140,6 @@
         "resolved": "5.26.0",
         "contentHash": "0Ij4oRm3bWqpBp3WwoGa+MAuaBe6MXv7lliY2bO1+zf4NuvxjekWw2vETWMl7e/YJhDWLkOox4Fo+l/0HHLC2w=="
       },
-      "FastEndpoints.Security": {
-        "type": "Transitive",
-        "resolved": "5.26.0",
-        "contentHash": "kRiMk0sPXm3ttU/mWd7eUpw19sDrhr0ctSr9V1lccRkWQR+dvGHFN1bKBi80BxnN/AkkDCf/e1axXgdRl1wwaQ==",
-        "dependencies": {
-          "FastEndpoints": "5.26.0",
-          "Microsoft.AspNetCore.Authentication.JwtBearer": "8.0.5"
-        }
-      },
       "FluentValidation": {
         "type": "Transitive",
         "resolved": "11.9.1",
@@ -2226,6 +2217,16 @@
           "FastEndpoints.Attributes": "5.26.0",
           "FastEndpoints.Messaging.Core": "5.26.0",
           "FluentValidation": "11.9.1"
+        }
+      },
+      "FastEndpoints.Security": {
+        "type": "CentralTransitive",
+        "requested": "[5.26.0, )",
+        "resolved": "5.26.0",
+        "contentHash": "kRiMk0sPXm3ttU/mWd7eUpw19sDrhr0ctSr9V1lccRkWQR+dvGHFN1bKBi80BxnN/AkkDCf/e1axXgdRl1wwaQ==",
+        "dependencies": {
+          "FastEndpoints": "5.26.0",
+          "Microsoft.AspNetCore.Authentication.JwtBearer": "8.0.5"
         }
       },
       "FastEndpoints.Swagger": {

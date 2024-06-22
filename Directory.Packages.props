@@ -1,5 +1,7 @@
 <Project>
   <ItemGroup>
+    <PackageVersion Include="Akka" Version="1.5.25" />
+    <PackageVersion Include="Akka.Hosting" Version="1.5.25" />
     <PackageVersion Include="FastEndpoints" Version="5.26.0" />
     <PackageVersion Include="FastEndpoints.Security" Version="5.26.0" />
     <PackageVersion Include="FastEndpoints.Swagger" Version="5.26.0" />
