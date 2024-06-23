@@ -1,4 +1,10 @@
+using Akka.Hosting;
+using Akka.Routing;
+
 using FastEndpoints;
+using FastEndpoints.Swagger;
+
+using ShoppingListSample.Core.Actors;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -6,7 +12,15 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddFastEndpoints();
-
+builder.Services.AddAkka("ShoppingListSample", configurationBuilder =>
+{
+    configurationBuilder.WithActors((system, registry) =>
+    {
+        var actor = system.ActorOf(ShoppingListsActor.Props().WithRouter(new RoundRobinPool(10)), "shoppingLists");
+        registry.Register<ShoppingListsActor>(actor);
+    });
+});
+builder.Services.AddSwaggerDocument();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -17,6 +31,7 @@ if (!app.Environment.IsDevelopment())
 app.UseStaticFiles();
 app.UseRouting();
 app.UseFastEndpoints();
+app.UseSwaggerGen();
 
 app.MapControllerRoute(
     name: "default",

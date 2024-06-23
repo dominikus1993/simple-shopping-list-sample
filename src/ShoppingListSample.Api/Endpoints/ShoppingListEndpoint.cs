@@ -1,27 +1,68 @@
+using Akka.Actor;
+using Akka.Hosting;
+
 using FastEndpoints;
+
+using ShoppingListSample.Core.Actors;
+using ShoppingListSample.Core.Model;
 
 namespace ShoppingListSample.Api.Endpoints;
 
-public sealed class GetShoppingListRequest
+public sealed class ShoppingListItemResponseDto
 {
+    public Guid ItemId { get; set; }
+    public uint Quantity { get; set; }
+
+    public ShoppingListItemResponseDto()
+    {
+        
+    }
     
+    public ShoppingListItemResponseDto(Product dto)
+    {
+        ItemId = dto.ItemId.Value;
+        Quantity = dto.Quantity.Value;
+    }
 }
 
-public class GetShoppingListResponse
+public sealed class GetShoppingListRequest
 {
+    [QueryParam]
+    public Guid ShoppingListId { get; init; }
+}
+
+public sealed class GetShoppingListResponse
+{
+    public Guid ShoppingListId { get; init; }
+    public IReadOnlyList<ShoppingListItemResponseDto> Items { get; init; } = null!;
 }
 
 
 public sealed class GetShoppingListEndpoint : Endpoint<GetShoppingListRequest, GetShoppingListResponse>
 {
+    private IRequiredActor<ShoppingListsActor> _shoppingListsActorProvider;
+
+    public GetShoppingListEndpoint(IRequiredActor<ShoppingListsActor> shoppingListsActor)
+    {
+        _shoppingListsActorProvider = shoppingListsActor;
+    }
+
     public override void Configure()
     {
         Get("/api/shoppingLists");
         AllowAnonymous();
     }
 
-    public override Task HandleAsync(GetShoppingListRequest req, CancellationToken ct)
+    public override async Task HandleAsync(GetShoppingListRequest req, CancellationToken ct)
     {
-        throw new NotImplementedException();
+        var actor = await _shoppingListsActorProvider.GetAsync(ct);
+        var response = await actor.Ask<Core.Actors.GetShoppingListResponse>(new GetShoppingList(new CustomerId(req.ShoppingListId)), ct);
+        var result = new GetShoppingListResponse
+        {
+            ShoppingListId = response.ShoppingList.CustomerId.Value,
+            Items = response.ShoppingList.Products.MapItems(item => new ShoppingListItemResponseDto(item)).ToArray(),
+        };
+
+        await SendOkAsync(result, ct);
     }
 }
