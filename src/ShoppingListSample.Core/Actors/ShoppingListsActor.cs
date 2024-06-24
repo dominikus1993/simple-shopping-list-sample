@@ -2,11 +2,9 @@ using Akka.Actor;
 
 using ShoppingListSample.Core.Model;
 
-using ShoppingListId = System.Guid;
-
 namespace ShoppingListSample.Core.Actors;
 
-public sealed record GetShoppingList(CustomerId Id);
+public sealed record GetShoppingList(ShoppingListId ShoppingListId, CustomerId CustomerId);
 
 public sealed class ShoppingListsActor : UntypedActor
 {
@@ -14,7 +12,6 @@ public sealed class ShoppingListsActor : UntypedActor
 
     public ShoppingListsActor()
     {
-        ActorMetaData = new ActorMetaData();
     }
     protected override void OnReceive(object message)
     {
@@ -28,17 +25,17 @@ public sealed class ShoppingListsActor : UntypedActor
 
     private void HandleGetShoppingList(GetShoppingList msg)
     {
-        var shoppingListActor = GetOrCreate(msg.Id);
+        var shoppingListActor = GetOrCreate(msg.CustomerId);
         shoppingListActor.Forward(msg);
     }
 
 
-    private IActorRef GetOrCreate(CustomerId id)
+    private static IActorRef GetOrCreate(CustomerId customerId)
     {
-        var idStr = id.Value.ToString();
+        var idStr = customerId.Value.ToString();
         var child = Context.Child(idStr);
         if (Equals(child, ActorRefs.Nobody))
-            child = Context.ActorOf(ShoppingListActor.Props(id), idStr);
+            child = Context.ActorOf(CustomerShoppingListsActor.Props(customerId), idStr);
         return child;
     }
     

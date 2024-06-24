@@ -4,9 +4,9 @@ public abstract partial class ShoppingList
 {
     private sealed class EmptyShoppingList : ShoppingList
     {
-        public static EmptyShoppingList Zero(CustomerId customerId) => new(customerId);
+        public static EmptyShoppingList Zero(ShoppingListId id, CustomerId customerId) => new(id, customerId);
 
-        internal EmptyShoppingList(CustomerId customerId) : base(customerId)
+        internal EmptyShoppingList(ShoppingListId id, CustomerId customerId) : base(id, customerId)
         {
         }
 
@@ -14,12 +14,12 @@ public abstract partial class ShoppingList
 
         public override ShoppingList AddItem(Product item)
         {
-            return ActiveShoppingList.Zero(CustomerId).AddItem(item);
+            return ActiveShoppingList.Zero(Id, CustomerId).AddItem(item);
         }
 
         public override ShoppingList AddItems(IEnumerable<Product> items)
         {
-            return ActiveShoppingList.Zero(CustomerId).AddItems(items);
+            return ActiveShoppingList.Zero(Id, CustomerId).AddItems(items);
         }
 
         public override ShoppingList RemoveItem(Product item)

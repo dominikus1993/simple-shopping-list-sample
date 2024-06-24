@@ -16,7 +16,7 @@ builder.Services.AddAkka("ShoppingListSample", configurationBuilder =>
 {
     configurationBuilder.WithActors((system, registry) =>
     {
-        var actor = system.ActorOf(ShoppingListsActor.Props().WithRouter(new RoundRobinPool(10)), "shoppingLists");
+        var actor = system.ActorOf(ShoppingListsActor.Props(), "shoppingLists");
         registry.Register<ShoppingListsActor>(actor);
     });
 });

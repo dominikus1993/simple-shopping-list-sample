@@ -3,6 +3,8 @@ using Akka.Hosting;
 
 using FastEndpoints;
 
+using Microsoft.AspNetCore.Mvc;
+
 using ShoppingListSample.Core.Actors;
 using ShoppingListSample.Core.Model;
 
@@ -27,7 +29,6 @@ public sealed class ShoppingListItemResponseDto
 
 public sealed class GetShoppingListRequest
 {
-    [QueryParam]
     public Guid ShoppingListId { get; init; }
 }
 
@@ -40,6 +41,7 @@ public sealed class GetShoppingListResponse
 
 public sealed class GetShoppingListEndpoint : Endpoint<GetShoppingListRequest, GetShoppingListResponse>
 {
+    private static readonly Guid DefaultUserId = new Guid("00000000-0000-0000-0000-000000000000");
     private IRequiredActor<ShoppingListsActor> _shoppingListsActorProvider;
 
     public GetShoppingListEndpoint(IRequiredActor<ShoppingListsActor> shoppingListsActor)
@@ -49,14 +51,14 @@ public sealed class GetShoppingListEndpoint : Endpoint<GetShoppingListRequest, G
 
     public override void Configure()
     {
-        Get("/api/shoppingLists");
+        Get("/api/shoppingLists/{ShoppingListId}");
         AllowAnonymous();
     }
 
     public override async Task HandleAsync(GetShoppingListRequest req, CancellationToken ct)
     {
         var actor = await _shoppingListsActorProvider.GetAsync(ct);
-        var response = await actor.Ask<Core.Actors.GetShoppingListResponse>(new GetShoppingList(new CustomerId(req.ShoppingListId)), ct);
+        var response = await actor.Ask<Core.Actors.GetShoppingListResponse>(new GetShoppingList(new ShoppingListId(req.ShoppingListId), new CustomerId(DefaultUserId)), ct);
         var result = new GetShoppingListResponse
         {
             ShoppingListId = response.ShoppingList.CustomerId.Value,

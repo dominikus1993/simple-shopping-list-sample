@@ -2,19 +2,21 @@ namespace ShoppingListSample.Core.Model;
 
 public abstract partial class ShoppingList
 {
+    public ShoppingListId Id { get; }
     public CustomerId CustomerId { get; }
 
-    private ShoppingList(CustomerId customerId)
+    private ShoppingList(ShoppingListId id, CustomerId customerId)
     {
         CustomerId = customerId;
+        Id = id;
     }
     
     public abstract bool IsEmpty { get; }
     
-    public static ShoppingList Empty(CustomerId id) => EmptyShoppingList.Zero(id);
+    public static ShoppingList Empty(ShoppingListId id, CustomerId customerId) => EmptyShoppingList.Zero(id, customerId);
 
-    public static ShoppingList Active(CustomerId id, Products items) => new ActiveShoppingList(id, items);
-    public static ShoppingList Active(CustomerId id, IEnumerable<Product> items) => new ActiveShoppingList(id, Products.Create(items));
+    public static ShoppingList Active(ShoppingListId id, CustomerId customerId, Products items) => new ActiveShoppingList(id, customerId, items);
+    public static ShoppingList Active(ShoppingListId id, CustomerId customerId, IEnumerable<Product> items) => new ActiveShoppingList(id, customerId, Products.Create(items));
 
     public abstract ShoppingList AddItem(Product item);
     
