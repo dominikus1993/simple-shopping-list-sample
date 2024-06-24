@@ -1,7 +1,12 @@
 import {Component, Inject, inject} from '@angular/core';
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpErrorResponse} from "@angular/common/http";
 import {ActivatedRoute, Params, Router} from "@angular/router";
-import {switchMap} from "rxjs";
+import {catchError, map, Observable, of, switchMap} from "rxjs";
+
+interface FetchDataComponentShoppingListsData {
+  readonly data: GetShoppingListsResponse | null;
+  readonly errors: HttpErrorResponse | null;
+}
 
 @Component({
   selector: 'app-home',
@@ -9,17 +14,19 @@ import {switchMap} from "rxjs";
 })
 export class HomeComponent {
   private http: HttpClient = inject(HttpClient);
-  private router: ActivatedRoute = inject(ActivatedRoute);
+  private activeRouter: ActivatedRoute = inject(ActivatedRoute);
 
-  public shoppingLists = this.router.queryParams.pipe(
-    switchMap((params: Params) => this.getUserShoppingLists(params["page"] ?? 1, params["pageSize"] ?? 12))
+  public shoppingLists: Observable<FetchDataComponentShoppingListsData> = this.activeRouter.queryParams.pipe(
+    switchMap((params: Params) => this.getUserShoppingLists(params["page"] ?? 1, params["pageSize"] ?? 12)),
+    map((response) => ({ data: response, errors: null })),
+    catchError((error) => of({ data: null, errors: error }))
   )
 
   constructor(@Inject('BASE_URL') private baseUrl: string) {
   }
 
   getUserShoppingLists(page: number, pageSize: number) {
-    return this.http.get<GetShoppingListsResponse>(this.baseUrl + `api/shoppingLists?page=${page}&pageSize=${pageSize}`);
+    return this.http.get<GetShoppingListsResponse>(this.baseUrl + `shoppingLists?page=${page}&pageSize=${pageSize}`);
   }
 }
 
