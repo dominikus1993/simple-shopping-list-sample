@@ -8,11 +8,11 @@ export class CounterComponent {
   public currentCount = signal(0);
 
   public powCounter = computed(() => this.currentCount() ** 2);
-  public incrementCounter() {
+  public async incrementCounter() {
     this.currentCount.set(this.currentCount() + 1)
   }
 
-  public decrementCounter() {
+  public async decrementCounter() {
     this.currentCount.set(this.currentCount() - 1)
   }
 }

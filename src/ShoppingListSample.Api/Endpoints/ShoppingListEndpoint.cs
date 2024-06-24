@@ -38,7 +38,6 @@ public sealed class GetShoppingListResponse
     public IReadOnlyList<ShoppingListItemResponseDto> Items { get; init; } = null!;
 }
 
-
 public sealed class GetShoppingListEndpoint : Endpoint<GetShoppingListRequest, GetShoppingListResponse>
 {
     private static readonly Guid DefaultUserId = new Guid("00000000-0000-0000-0000-000000000000");
@@ -61,7 +60,7 @@ public sealed class GetShoppingListEndpoint : Endpoint<GetShoppingListRequest, G
         var response = await actor.Ask<Core.Actors.GetShoppingListResponse>(new GetShoppingList(new ShoppingListId(req.ShoppingListId), new CustomerId(DefaultUserId)), ct);
         var result = new GetShoppingListResponse
         {
-            ShoppingListId = response.ShoppingList.CustomerId.Value,
+            ShoppingListId = response.ShoppingList.Id.Value,
             Items = response.ShoppingList.Products.MapItems(item => new ShoppingListItemResponseDto(item)).ToArray(),
         };
 

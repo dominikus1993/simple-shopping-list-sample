@@ -1,4 +1,4 @@
-import {Component, Inject, OnInit, Signal, signal} from '@angular/core';
+import {Component, inject, Inject, OnInit, Signal, signal} from '@angular/core';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {catchError, combineLatest, map, Observable, of} from "rxjs";
 import {toSignal} from "@angular/core/rxjs-interop";
@@ -14,7 +14,9 @@ interface FetchDataComponentForecastData {
 })
 export class FetchDataComponent {
   public data: Signal<FetchDataComponentForecastData> = toSignal(this.getWeatherForecasts(), { initialValue: { forecasts: [], errors: null} });
-  constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string) {
+  private http: HttpClient = inject(HttpClient);
+
+  constructor(@Inject('BASE_URL') private baseUrl: string) {
   }
 
   private getWeatherForecasts() {

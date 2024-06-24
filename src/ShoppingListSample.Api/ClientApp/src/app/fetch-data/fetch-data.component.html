@@ -2,7 +2,7 @@
 
 <p>This component demonstrates fetching data from the server.</p>
 
-@if(data().forecasts.length > 0){
+@if(data().errors === null){
     <table class='table table-striped' aria-labelledby="tableLabel">
       <thead>
       <tr>

@@ -9,10 +9,11 @@ public sealed record GetShoppingListResponse(ShoppingList ShoppingList);
 public sealed class ShoppingListActor : UntypedActor
 {
     
-    private ShoppingList _state;
+    private readonly ShoppingList _state;
 
     public ShoppingListActor(ShoppingListId id, CustomerId customerId)
     {
+        _state = ShoppingList.Empty(id, customerId);
     }
     
     protected override void OnReceive(object message)
