@@ -9,6 +9,7 @@ import { HomeComponent } from './home/home.component';
 import { CounterComponent } from './counter/counter.component';
 import { FetchDataComponent } from './fetch-data/fetch-data.component';
 import {BrowserModule} from "@angular/platform-browser";
+import {ShoppingListDetailsComponent} from "./shopping-list-details/shopping-list-details.component";
 
 @NgModule({
   declarations: [
@@ -23,6 +24,7 @@ import {BrowserModule} from "@angular/platform-browser";
     FormsModule,
     RouterModule.forRoot([
       { path: '', component: HomeComponent, pathMatch: 'full',  },
+      { path: "details/:id", component: ShoppingListDetailsComponent },
       { path: 'counter', component: CounterComponent },
       { path: 'fetch-data', component: FetchDataComponent },
     ])

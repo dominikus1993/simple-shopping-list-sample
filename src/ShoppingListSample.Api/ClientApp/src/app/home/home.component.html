@@ -25,7 +25,7 @@
     <tbody>
       @for (list of shoppingLists.data?.shoppingLists; track list) {
         <tr>
-          <td>{{ list.id }}</td>
+          <td><a [routerLink]="['details', list.id]">{{ list.id }}</a></td>
           <td>{{ list.name }}</td>
         </tr>
       }
