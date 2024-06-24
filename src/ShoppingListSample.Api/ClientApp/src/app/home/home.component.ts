@@ -19,7 +19,7 @@ export class HomeComponent {
   }
 
   getUserShoppingLists(page: number, pageSize: number) {
-    return this.http.get<ShoppingList[]>(this.baseUrl + `api/shoppingLists?page=${page}&pageSize=${pageSize}`);
+    return this.http.get<GetShoppingListsResponse>(this.baseUrl + `api/shoppingLists?page=${page}&pageSize=${pageSize}`);
   }
 }
 
@@ -27,4 +27,9 @@ export class HomeComponent {
 interface ShoppingList {
   readonly id: string
   readonly name: string
+}
+
+interface GetShoppingListsResponse {
+  readonly shoppingLists: ShoppingList[]
+  readonly total: number
 }
