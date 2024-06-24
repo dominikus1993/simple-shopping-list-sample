@@ -1,6 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-
-using ShoppingListSample.Api.Endpoints;
 using ShoppingListSample.Api.Responses;
 
 namespace ShoppingListSample.Api.Controllers;
