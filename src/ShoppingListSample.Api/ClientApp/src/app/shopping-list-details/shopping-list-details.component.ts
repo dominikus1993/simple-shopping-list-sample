@@ -1,7 +1,8 @@
 import {Component, Inject, inject, OnInit, signal} from '@angular/core';
-import {ActivatedRoute, Params} from "@angular/router";
-import {catchError, map, Observable, of, switchMap, throwError} from "rxjs";
-import {HttpClient, HttpErrorResponse} from "@angular/common/http";
+import {ActivatedRoute, ParamMap, Params} from "@angular/router";
+import {catchError, map, Observable, of, switchMap} from "rxjs";
+import {ShoppingListResponse, ShoppingListsService} from "../services/shopping-lists/shopping-lists.service";
+import {AsyncPipe} from "@angular/common";
 
 interface Error {
   message: string
@@ -14,22 +15,24 @@ interface FetchComponentShoppingListsData {
 @Component({
   selector: 'app-shopping-list-details',
   standalone: true,
-  imports: [],
+  imports: [
+    AsyncPipe
+  ],
   templateUrl: './shopping-list-details.component.html',
   styleUrl: './shopping-list-details.component.css'
 })
 export class ShoppingListDetailsComponent implements OnInit {
   private router = inject(ActivatedRoute)
-  private http = inject(HttpClient)
+  private shoppingListsService = inject(ShoppingListsService)
 
   public id = signal<string | null>(null)
 
-  public shoppingLists: Observable<FetchComponentShoppingListsData> = this.router.queryParams.pipe(
-    switchMap((params: Params) => this.getShoppingList(params["id"])),
+  public shoppingList: Observable<FetchComponentShoppingListsData> = this.router.paramMap.pipe(
+    switchMap((params: ParamMap) => this.shoppingListsService.getShoppingList(params.get("id"))),
     map((response) => ({ data: response, errors: null })),
     catchError((error) => of({ data: null, errors: error }))
   )
-  constructor(@Inject('BASE_URL')private baseUrl: string) {
+  constructor() {
   }
 
   ngOnInit(): void {
@@ -37,25 +40,4 @@ export class ShoppingListDetailsComponent implements OnInit {
       map(params => params.get('id'))
     ).subscribe(next=> this.id.set(next))
   }
-
-
-  getShoppingList(id: string | null) {
-    if (id === null)
-      return throwError(() => ({ message: "Id is null" }))
-
-    return this.http.get<ShoppingListResponse>(this.baseUrl + `shoppingLists/${id}`);
-  }
-
-}
-
-interface ShoppingListResponse {
-  readonly id: string
-  readonly name: string
-  readonly items: ShoppingListItem[]
-}
-
-interface ShoppingListItem {
-  readonly id: string
-  readonly name: string
-  readonly quantity: number
 }

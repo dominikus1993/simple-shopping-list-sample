@@ -1,1 +1,21 @@
 <p>shopping-list-details works! {{id()}}</p>
+
+@if(shoppingList | async; as shoppingList) {
+  <h1>Shopping List Details</h1>
+  <table class='table table-striped' aria-labelledby="tableLabel">
+    <thead>
+    <tr>
+      <th>Id</th>
+      <th>Name</th>
+    </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>{{ shoppingList.data?.id }}</td>
+        <td>{{ shoppingList.data?.name }}</td>
+      </tr>
+    </tbody>
+  </table>
+} @else {
+  <p><em>Loading...</em></p>
+}
