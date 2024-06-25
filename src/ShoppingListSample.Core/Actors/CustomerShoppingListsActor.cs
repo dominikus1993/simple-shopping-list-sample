@@ -4,6 +4,8 @@ using ShoppingListSample.Core.Model;
 
 namespace ShoppingListSample.Core.Actors;
 
+public sealed record CustomerShoppingListCreated(ShoppingListId ShoppingListId, CustomerId CustomerId, ShoppingListName Name);
+
 public sealed class CustomerShoppingListsActor : UntypedActor
 {
     private ShoppingList _state;
@@ -25,14 +27,18 @@ public sealed class CustomerShoppingListsActor : UntypedActor
             case CreateNewShoppingList msg:
                 HandleCreateNewShoppingList(msg);
                 break;
+            case CustomerShoppingListCreated msg:
+                _allCustomerShoppingListsActor.Tell(msg);
+                break;
         }
     }
 
     private void HandleCreateNewShoppingList(CreateNewShoppingList msg)
     {
-        var listId = S
-        var actor = GetOrCreate(msg.ShoppingListId, msg.CustomerId);
-        actor.Forward(msg);
+        var listId = ShoppingListId.New();
+        var actor = GetOrCreate(listId, msg.CustomerId);
+        actor.Tell(msg);
+        Sender.Tell(new CustomerShoppingListCreated(listId, msg.CustomerId, msg.Name));
     }
 
     private void HandleGetShoppingList(GetShoppingList msg)
@@ -65,9 +71,6 @@ public sealed class AllCustomerShoppingListsActor : UntypedActor
     {
         switch (message)
         {
-            case GetShoppingList msg:
-                HandleGetShoppingList(msg);
-                break;
         }
     }
     public static Props Props(CustomerId customerId) => Akka.Actor.Props.Create(() => new CustomerShoppingListsActor(customerId));

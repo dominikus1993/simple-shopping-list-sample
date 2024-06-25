@@ -5,7 +5,7 @@ using ShoppingListSample.Core.Model;
 namespace ShoppingListSample.Core.Actors;
 
 public sealed record GetShoppingList(ShoppingListId ShoppingListId, CustomerId CustomerId);
-public sealed record CreateNewShoppingList(CustomerId CustomerId, string Name);
+public sealed record CreateNewShoppingList(CustomerId CustomerId, ShoppingListName Name);
 public sealed record ShoppingListCreated(ShoppingListId Id, CustomerId CustomerId, string Name);
 public sealed record GetCustomerShoppingLists(CustomerId CustomerId);
 public sealed class ShoppingListsActor : UntypedActor
