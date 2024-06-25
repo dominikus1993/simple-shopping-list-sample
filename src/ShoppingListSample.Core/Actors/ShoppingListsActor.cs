@@ -5,7 +5,9 @@ using ShoppingListSample.Core.Model;
 namespace ShoppingListSample.Core.Actors;
 
 public sealed record GetShoppingList(ShoppingListId ShoppingListId, CustomerId CustomerId);
-
+public sealed record CreateNewShoppingList(CustomerId CustomerId, string Name);
+public sealed record ShoppingListCreated(ShoppingListId Id, CustomerId CustomerId, string Name);
+public sealed record GetCustomerShoppingLists(CustomerId CustomerId);
 public sealed class ShoppingListsActor : UntypedActor
 {
     private readonly ActorMetaData ActorMetaData;
@@ -20,7 +22,16 @@ public sealed class ShoppingListsActor : UntypedActor
             case GetShoppingList msg:
                 HandleGetShoppingList(msg);
                 break;
+            case GetCustomerShoppingLists msg:
+                HandleGetCustomerShoppingLists(msg);
+                break;
         }
+    }
+
+    private void HandleGetCustomerShoppingLists(GetCustomerShoppingLists msg)
+    {
+        var shoppingListActor = GetOrCreate(msg.CustomerId);
+        shoppingListActor.Forward(msg);
     }
 
     private void HandleGetShoppingList(GetShoppingList msg)

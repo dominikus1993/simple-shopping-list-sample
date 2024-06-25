@@ -1,6 +1,6 @@
 <p>shopping-list-details works! {{id()}}</p>
 
-@if(shoppingList | async; as shoppingList) {
+@if(shoppingList$ | async; as shoppingList) {
   <h1>Shopping List Details</h1>
   <table class='table table-striped' aria-labelledby="tableLabel">
     <thead>

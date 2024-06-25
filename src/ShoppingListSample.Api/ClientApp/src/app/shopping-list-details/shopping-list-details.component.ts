@@ -27,7 +27,7 @@ export class ShoppingListDetailsComponent implements OnInit {
 
   public id = signal<string | null>(null)
 
-  public shoppingList: Observable<FetchComponentShoppingListsData> = this.router.paramMap.pipe(
+  public shoppingList$: Observable<FetchComponentShoppingListsData> = this.router.paramMap.pipe(
     switchMap((params: ParamMap) => this.shoppingListsService.getShoppingList(params.get("id"))),
     map((response) => ({ data: response, errors: null })),
     catchError((error) => of({ data: null, errors: error }))
