@@ -24,21 +24,27 @@ public sealed class CustomerShoppingListsActor : UntypedActor
             case GetShoppingList msg:
                 HandleGetShoppingList(msg);
                 break;
+            case GetShoppingLists msg:
+                HandleGetShoppingLists(msg);
+                break;
             case CreateNewShoppingList msg:
                 HandleCreateNewShoppingList(msg);
                 break;
-            case CustomerShoppingListCreated msg:
-                _allCustomerShoppingListsActor.Tell(msg);
-                break;
         }
+    }
+
+    private void HandleGetShoppingLists(GetShoppingLists msg)
+    {
+        _allCustomerShoppingListsActor.Forward(msg);
     }
 
     private void HandleCreateNewShoppingList(CreateNewShoppingList msg)
     {
         var listId = ShoppingListId.New();
-        var actor = GetOrCreate(listId, msg.CustomerId);
-        actor.Tell(msg);
-        Sender.Tell(new CustomerShoppingListCreated(listId, msg.CustomerId, msg.Name));
+        GetOrCreate(listId, msg.CustomerId);
+        var message = new CustomerShoppingListCreated(listId, msg.CustomerId, msg.Name);
+        _allCustomerShoppingListsActor.Tell(message);
+        Sender.Tell(message);
     }
 
     private void HandleGetShoppingList(GetShoppingList msg)
@@ -59,20 +65,31 @@ public sealed class CustomerShoppingListsActor : UntypedActor
     }
 }
 
+public sealed record SimpleShoppingList(ShoppingListId Id, ShoppingListName Name);
 public sealed class AllCustomerShoppingListsActor : UntypedActor
 {
-    private ShoppingList _state;
+    private List<SimpleShoppingList> _state;
 
     public AllCustomerShoppingListsActor(CustomerId customerId)
     {
+        _state = [];
     }
     
     protected override void OnReceive(object message)
     {
         switch (message)
         {
+            case GetShoppingLists msg:
+                HandleGetShoppingLists(msg);
+                break;
         }
     }
+
+    private void HandleGetShoppingLists(GetShoppingLists msg)
+    {
+        
+    }
+
     public static Props Props(CustomerId customerId) => Akka.Actor.Props.Create(() => new CustomerShoppingListsActor(customerId));
     
 }

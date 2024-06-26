@@ -16,7 +16,7 @@ interface FetchDataComponentShoppingListsData {
 export class HomeComponent {
   private activeRouter: ActivatedRoute = inject(ActivatedRoute);
   private shoppingListsService = inject(ShoppingListsService)
-  public shoppingLists: Observable<FetchDataComponentShoppingListsData> = this.activeRouter.queryParams.pipe(
+  public shoppingLists$: Observable<FetchDataComponentShoppingListsData> = this.activeRouter.queryParams.pipe(
     switchMap((params: Params) => this.shoppingListsService.getUserShoppingLists(params["page"] ?? 1, params["pageSize"] ?? 12)),
     map((response) => ({ data: response, errors: null })),
     catchError((error) => of({ data: null, errors: error }))
