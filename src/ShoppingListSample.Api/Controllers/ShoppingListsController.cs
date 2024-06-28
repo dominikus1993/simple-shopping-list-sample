@@ -27,12 +27,11 @@ public sealed class ShoppingListsController: ControllerBase
     public async Task<ActionResult<GetShoppingListsResponse>> GetCustomerShoppingLists([FromQuery]int page = 1, [FromQuery]int pageSize = 12, CancellationToken cancellationToken = default)
     {
         var actor = await _requiredActor.GetAsync(cancellationToken);
-        var data = actor.Ask<GetShoppingListsResponse>(new GetCustomerShoppingLists(_defaultCustomerId), cancellationToken: cancellationToken);
-        await Task.Yield();
+        var data = await actor.Ask<ShoppingListSample.Core.Actors.GetShoppingListsResponse>(new GetCustomerShoppingLists(_defaultCustomerId, page, pageSize), cancellationToken: cancellationToken);
         var response = new GetShoppingListsResponse()
         {
-            Total = 12,
-            ShoppingLists = [new ShoppingListBasicData() { Id = Guid.NewGuid(), Name = "Shopping List 1" }]
+            Total = data.Total,
+            ShoppingLists = data.ShoppingLists.Select(x => new ShoppingListBasicData() { Id = x.Id.Value, Name = x.Name.Value }).ToList()
         };
         return Ok(response);
     }

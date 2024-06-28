@@ -24,7 +24,7 @@ public sealed class CustomerShoppingListsActor : UntypedActor
             case GetShoppingList msg:
                 HandleGetShoppingList(msg);
                 break;
-            case GetShoppingLists msg:
+            case GetCustomerShoppingLists msg:
                 HandleGetShoppingLists(msg);
                 break;
             case CreateNewShoppingList msg:
@@ -33,7 +33,7 @@ public sealed class CustomerShoppingListsActor : UntypedActor
         }
     }
 
-    private void HandleGetShoppingLists(GetShoppingLists msg)
+    private void HandleGetShoppingLists(GetCustomerShoppingLists msg)
     {
         _allCustomerShoppingListsActor.Forward(msg);
     }
@@ -79,17 +79,17 @@ public sealed class AllCustomerShoppingListsActor : UntypedActor
     {
         switch (message)
         {
-            case GetShoppingLists msg:
+            case GetCustomerShoppingLists msg:
                 HandleGetShoppingLists(msg);
                 break;
         }
     }
 
-    private void HandleGetShoppingLists(GetShoppingLists _)
+    private void HandleGetShoppingLists(GetCustomerShoppingLists _)
     {
-        Sender.Tell(new GetShoppingListsResponse(_state));
+        Sender.Tell(new GetShoppingListsResponse(_state, _state.Count));
     }
 
-    public static Props Props(CustomerId customerId) => Akka.Actor.Props.Create(() => new CustomerShoppingListsActor(customerId));
+    public static Props Props(CustomerId customerId) => Akka.Actor.Props.Create(() => new AllCustomerShoppingListsActor(customerId));
     
 }

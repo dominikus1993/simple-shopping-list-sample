@@ -1,3 +1,3 @@
 ﻿namespace ShoppingListSample.Core.Model;
 
-public sealed record ShoppingListName();
+public sealed record ShoppingListName(string Value);
