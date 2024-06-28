@@ -85,9 +85,9 @@ public sealed class AllCustomerShoppingListsActor : UntypedActor
         }
     }
 
-    private void HandleGetShoppingLists(GetShoppingLists msg)
+    private void HandleGetShoppingLists(GetShoppingLists _)
     {
-        
+        Sender.Tell(new GetShoppingListsResponse(_state));
     }
 
     public static Props Props(CustomerId customerId) => Akka.Actor.Props.Create(() => new CustomerShoppingListsActor(customerId));

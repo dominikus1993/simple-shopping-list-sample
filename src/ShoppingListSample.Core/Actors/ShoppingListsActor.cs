@@ -6,9 +6,10 @@ namespace ShoppingListSample.Core.Actors;
 
 public sealed record GetShoppingList(ShoppingListId ShoppingListId, CustomerId CustomerId);
 public sealed record GetShoppingLists(CustomerId CustomerId);
+public sealed record GetShoppingListsResponse(IReadOnlyCollection<SimpleShoppingList> ShoppingLists);
 public sealed record CreateNewShoppingList(CustomerId CustomerId, ShoppingListName Name);
 public sealed record ShoppingListCreated(ShoppingListId Id, CustomerId CustomerId, string Name);
-public sealed record GetCustomerShoppingLists(CustomerId CustomerId);
+public sealed record GetCustomerShoppingLists(CustomerId CustomerId, int Page, int PageSize);
 public sealed class ShoppingListsActor : UntypedActor
 {
     private readonly ActorMetaData ActorMetaData;
