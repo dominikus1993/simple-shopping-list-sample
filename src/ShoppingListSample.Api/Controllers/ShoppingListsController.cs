@@ -39,12 +39,18 @@ public sealed class ShoppingListsController: ControllerBase
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<GetShoppingListResponse>> GetCustomerShoppingList(Guid id, CancellationToken cancellationToken = default)
     {
-        await Task.Yield();
+        var actor = await _requiredActor.GetAsync(cancellationToken);
+        var data = await actor.Ask<ShoppingListSample.Core.Actors.GetShoppingListResponse>(new GetShoppingList(new ShoppingListId(id), _defaultCustomerId), cancellationToken: cancellationToken);
+        if (data.ShoppingList is null)
+        {
+            return NotFound();
+        }
+        
         var response = new GetShoppingListResponse()
         {
-            Id = id,
-            Name = "Shopping List 1",
-            Items = [new ShoppingListItemResponse() { Id = Guid.NewGuid(), Name = "Item 1", Quantity = 1 }]
+            Id = data.ShoppingList.Id.Value,
+            Name = data.ShoppingList.Name.Value,
+            Items = data.ShoppingList.Products.MapItems(x => new ShoppingListItemResponse() { Id = x.ItemId.Value, Name = x.Name.Value })
         };
         return Ok(response);
     }

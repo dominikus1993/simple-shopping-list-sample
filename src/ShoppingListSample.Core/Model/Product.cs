@@ -1,6 +1,11 @@
 namespace ShoppingListSample.Core.Model;
 
-public sealed record Product(ItemId ItemId, ItemQuantity Quantity)
+public sealed record ProductName(string Value)
+{
+    public static ProductName Empty => new(string.Empty);
+}
+
+public sealed record Product(ItemId ItemId, ItemQuantity Quantity, ProductName Name)
 {
     public bool Equals(Product? other)
     {

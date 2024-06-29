@@ -41,7 +41,7 @@ public sealed class CustomerShoppingListsActor : UntypedActor
     private void HandleCreateNewShoppingList(CreateNewShoppingList msg)
     {
         var listId = ShoppingListId.New();
-        GetOrCreate(listId, msg.CustomerId);
+        Create(listId, msg.CustomerId, msg.Name);
         var message = new CustomerShoppingListCreated(listId, msg.CustomerId, msg.Name);
         _allCustomerShoppingListsActor.Tell(message);
         Sender.Tell(message);
@@ -49,18 +49,32 @@ public sealed class CustomerShoppingListsActor : UntypedActor
 
     private void HandleGetShoppingList(GetShoppingList msg)
     {
-        var actor = GetOrCreate(msg.ShoppingListId, msg.CustomerId);
+        var actor = Get(msg.ShoppingListId, msg.CustomerId);
+        if (actor is null)
+        {
+            Sender.Tell(new GetShoppingListResponse(null));
+            return;
+        }
         actor.Forward(msg);
     }
 
     public static Props Props(CustomerId customerId) => Akka.Actor.Props.Create(() => new CustomerShoppingListsActor(customerId));
     
-    private static IActorRef GetOrCreate(ShoppingListId shoppingListId, CustomerId customerId)
+    private static IActorRef? Get(ShoppingListId shoppingListId, CustomerId customerId)
     {
         var idStr = shoppingListId.Value.ToString();
         var child = Context.Child(idStr);
         if (Equals(child, ActorRefs.Nobody))
-            child = Context.ActorOf(ShoppingListActor.Props(shoppingListId, customerId), idStr);
+            return null;
+        return child;
+    }
+    
+    private static IActorRef Create(ShoppingListId shoppingListId, CustomerId customerId, ShoppingListName name)
+    {
+        var idStr = shoppingListId.Value.ToString();
+        var child = Context.Child(idStr);
+        if (Equals(child, ActorRefs.Nobody))
+            child = Context.ActorOf(ShoppingListActor.Props(shoppingListId, customerId, name), idStr);
         return child;
     }
 }
