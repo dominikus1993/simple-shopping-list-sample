@@ -96,7 +96,15 @@ public sealed class AllCustomerShoppingListsActor : UntypedActor
             case GetCustomerShoppingLists msg:
                 HandleGetShoppingLists(msg);
                 break;
+            case CustomerShoppingListCreated msg:
+                HandleCreateNewShoppingList(msg);
+                break;
         }
+    }
+
+    private void HandleCreateNewShoppingList(CustomerShoppingListCreated msg)
+    {
+        _state.Add(new SimpleShoppingList(msg.ShoppingListId, msg.Name));
     }
 
     private void HandleGetShoppingLists(GetCustomerShoppingLists _)

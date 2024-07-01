@@ -2,6 +2,8 @@
 using Akka.Hosting;
 
 using Microsoft.AspNetCore.Mvc;
+
+using ShoppingListSample.Api.Requests;
 using ShoppingListSample.Api.Responses;
 using ShoppingListSample.Core.Actors;
 using ShoppingListSample.Core.Model;
@@ -36,7 +38,7 @@ public sealed class ShoppingListsController: ControllerBase
         return Ok(response);
     }
     
-    [HttpGet("{id:guid}")]
+    [HttpGet("{id:guid}", Name = nameof(GetCustomerShoppingList))]
     public async Task<ActionResult<GetShoppingListResponse>> GetCustomerShoppingList(Guid id, CancellationToken cancellationToken = default)
     {
         var actor = await _requiredActor.GetAsync(cancellationToken);
@@ -53,5 +55,17 @@ public sealed class ShoppingListsController: ControllerBase
             Items = data.ShoppingList.Products.MapItems(x => new ShoppingListItemResponse() { Id = x.ItemId.Value, Name = x.Name.Value })
         };
         return Ok(response);
+    }
+
+    [HttpPost]
+    public async Task<ActionResult> CreateShoppingList([FromBody] CreateShoppingListRequest request,
+        CancellationToken cancellationToken)
+    {
+        var actor = await _requiredActor.GetAsync(cancellationToken);
+        var response =
+            await actor.Ask<CustomerShoppingListCreated>(new CreateNewShoppingList(_defaultCustomerId,
+                new ShoppingListName(request.Name)), cancellationToken: cancellationToken);
+        
+        return CreatedAtRoute(nameof(GetCustomerShoppingList), new { id = response.ShoppingListId.Value }, null);
     }
 }
